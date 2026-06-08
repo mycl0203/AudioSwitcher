@@ -1115,7 +1115,7 @@ class AudioSwitcherApp:
         
         if messagebox.askyesno(
             "确认删除",
-            f"确定要删除设备组「{group.display_name}」吗？\n\n此操作可以在删除后5秒内撤销。",
+            f"确定要删除设备组「{group.display_name}」吗？",
             icon=messagebox.WARNING
         ):
             self._delete_group(index)
@@ -1128,8 +1128,6 @@ class AudioSwitcherApp:
         group = self.config.device_groups[index]
         
         # 保存删除前的数据
-        deleted_group = group
-        deleted_index = index
         old_groups = list(self.config.device_groups)
         
         # 删除
@@ -1145,47 +1143,135 @@ class AudioSwitcherApp:
         if self.tray_manager:
             self.tray_manager.update_groups(self.config.device_groups)
         
-        if self.toast_manager:
-            # 显示可撤销的通知
-            self.toast_manager.show_success(
-                f"已删除设备组: {group.display_name}"
-            )
-            
-            # 创建撤销通知
-            self._show_undo_notification(deleted_group, deleted_index, old_groups)
+        # 显示撤销选项 - 使用一次性窗口而不是toast + messagebox
+        self._show_undo_notification(group, index, old_groups)
     
     def _show_undo_notification(self, group: DeviceGroup, index: int, old_groups: List[DeviceGroup]):
-        """显示带撤销选项的通知"""
-        from modules.utils.toast import show_toast
+        """显示带撤销选项的通知 - 实现真正的5秒撤销窗口"""
         
-        # 显示撤销提示
-        if self.toast_manager:
-            self.toast_manager.show_info("撤销删除？", "点击撤销")
-            
-            # 这里我们可以通过一个简单的方式来实现撤销
-            # 实际应用中，我们可以用一个更优雅的方式
-            def undo_action():
-                # 恢复数据
-                if self.config:
-                    self.config.device_groups = old_groups.copy()
-                    config_manager.save(self.config)
-                    self._update_current_group_index()
-                    self._refresh_switch_tab()
-                    self._refresh_config_tab()
-                    self._reload_hotkeys()
-                    if self.tray_manager:
-                        self.tray_manager.update_groups(self.config.device_groups)
-                    if self.toast_manager:
-                        self.toast_manager.show_success(f"已恢复设备组: {group.display_name}")
-            
-            # 简单实现：显示消息框让用户选择撤销
-            # 在实际产品中，这应该是一个带按钮的通知
-            if messagebox.askyesno(
-                "撤销删除",
-                f"是否恢复设备组「{group.display_name}」？",
-                icon=messagebox.QUESTION
-            ):
-                undo_action()
+        # 创建撤销对话框
+        undo_window = ctk.CTkToplevel(self.root)
+        undo_window.title("撤销删除")
+        undo_window.geometry("420x180")
+        undo_window.resizable(False, False)
+        undo_window.attributes("-topmost", True)
+        undo_window.grab_set()
+        
+        # 居中显示
+        undo_window.update_idletasks()
+        x = (undo_window.winfo_screenwidth() // 2) - (420 // 2)
+        y = (undo_window.winfo_screenheight() // 2) - (180 // 2)
+        undo_window.geometry(f"+{x}+{y}")
+        
+        # 倒计时变量
+        remaining_time = 5
+        time_label_var = ctk.StringVar(value=f"5")
+        
+        # 撤销功能
+        def undo_action():
+            # 恢复数据
+            if self.config:
+                self.config.device_groups = old_groups.copy()
+                config_manager.save(self.config)
+                self._update_current_group_index()
+                self._refresh_switch_tab()
+                self._refresh_config_tab()
+                self._reload_hotkeys()
+                if self.tray_manager:
+                    self.tray_manager.update_groups(self.config.device_groups)
+                if self.toast_manager:
+                    self.toast_manager.show_success(f"已恢复设备组: {group.display_name}")
+            undo_window.destroy()
+        
+        # 关闭窗口（不撤销）
+        def close_window():
+            if self.toast_manager:
+                self.toast_manager.show_success(f"已删除设备组: {group.display_name}")
+            undo_window.destroy()
+        
+        # 更新倒计时
+        def update_timer():
+            nonlocal remaining_time
+            if remaining_time > 0:
+                remaining_time -= 1
+                time_label_var.set(str(remaining_time))
+                undo_window.after(1000, update_timer)
+            else:
+                close_window()
+        
+        # UI
+        main_frame = ctk.CTkFrame(undo_window, fg_color="transparent")
+        main_frame.pack(fill="both", expand=True, padx=20, pady=20)
+        
+        icon_label = ctk.CTkLabel(
+            main_frame,
+            text="🗑️",
+            font=(theme.fonts.main, 32)
+        )
+        icon_label.pack(pady=(0, 10))
+        
+        message_label = ctk.CTkLabel(
+            main_frame,
+            text=f"已删除设备组「{group.display_name}」",
+            font=(theme.fonts.main, theme.fonts.sizes["base"]),
+            text_color=theme.colors.text_primary
+        )
+        message_label.pack(pady=(0, 8))
+        
+        timer_frame = ctk.CTkFrame(main_frame, fg_color="transparent")
+        timer_frame.pack(pady=(0, 16))
+        
+        ctk.CTkLabel(
+            timer_frame,
+            text="将在 ",
+            font=(theme.fonts.main, theme.fonts.sizes["sm"]),
+            text_color=theme.colors.text_muted
+        ).pack(side="left")
+        
+        time_label = ctk.CTkLabel(
+            timer_frame,
+            textvariable=time_label_var,
+            font=(theme.fonts.main, theme.fonts.sizes["lg"], "bold"),
+            text_color=theme.colors.primary
+        )
+        time_label.pack(side="left")
+        
+        ctk.CTkLabel(
+            timer_frame,
+            text=" 秒后关闭",
+            font=(theme.fonts.main, theme.fonts.sizes["sm"]),
+            text_color=theme.colors.text_muted
+        ).pack(side="left")
+        
+        # 按钮
+        button_frame = ctk.CTkFrame(main_frame, fg_color="transparent")
+        button_frame.pack(fill="x")
+        
+        cancel_btn = ctk.CTkButton(
+            button_frame,
+            text="关闭",
+            width=120,
+            height=40,
+            fg_color=theme.colors.gray_100,
+            hover_color=theme.colors.gray_200,
+            text_color=theme.colors.text_primary,
+            command=close_window
+        )
+        cancel_btn.pack(side="right", padx=(8, 0))
+        
+        undo_btn = ctk.CTkButton(
+            button_frame,
+            text="撤销删除",
+            width=120,
+            height=40,
+            fg_color=theme.colors.primary,
+            hover_color=theme.colors.primary_hover,
+            command=undo_action
+        )
+        undo_btn.pack(side="right")
+        
+        # 启动倒计时
+        update_timer()
     
     def _minimize_to_tray(self):
         """最小化到系统托盘"""
