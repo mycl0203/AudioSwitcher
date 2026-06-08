@@ -11,22 +11,5 @@
   "hotkey_mute": "ctrl+alt+m",
   "enable_gui": false,
   "enable_notification": true,
-  "设备组": [
-    {
-      "显示名": "耳机",
-      "输出设备名": "HyperX Cloud III",
-      "输出设备ID": "{0.0.0.00000000}.{1dea5a10-3bc6-478b-8c92-d0d3b952582d}",
-      "输入设备名": "HyperX Cloud III",
-      "输入设备ID": "{0.0.1.00000000}.{121e5a9d-dc8e-403e-8fcb-dbc1385f488d}",
-      "快捷键": "ctrl+alt+2"
-    },
-    {
-      "显示名": "REDMI 电脑音箱 2 Pro + REDMI 电脑音箱 2 Pro",
-      "输出设备名": "REDMI 电脑音箱 2 Pro",
-      "输出设备ID": "{0.0.0.00000000}.{f485c24e-61bc-41ee-a190-932ede7fc1cb}",
-      "输入设备名": "REDMI 电脑音箱 2 Pro",
-      "输入设备ID": "{0.0.1.00000000}.{99777edc-a8ae-4ea3-a775-508f2801fee1}",
-      "快捷键": ""
-    }
-  ]
+  "设备组": []
 }
