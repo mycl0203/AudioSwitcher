@@ -107,7 +107,7 @@ class TrayIconManager:
         menu_items.append(Item("打开控制面板", _open_ui))
         menu_items.append(Menu.SEPARATOR)
         
-        # 设备组列表
+        # 设备组列表（包含快捷键）
         for idx, group in enumerate(self._device_groups):
             def _make_switch(i):
                 def _switch(*_):
@@ -115,11 +115,15 @@ class TrayIconManager:
                     return 0
                 return _switch
             
-            menu_items.append(Item(group.display_name, _make_switch(idx)))
+            name = group.display_name
+            if group.hotkey:
+                name = f"{name} ({group.hotkey})"
+            
+            menu_items.append(Item(name, _make_switch(idx)))
         
         menu_items.append(Menu.SEPARATOR)
         
-        # 麦克风静音
+        # 麦克风静音（包含快捷键提示）
         try:
             muted = self._get_mute_status()
         except Exception:
