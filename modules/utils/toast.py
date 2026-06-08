@@ -266,6 +266,7 @@ class ToastManager:
 _toast_manager: Optional[ToastManager] = None
 
 
+
 def init_toast_manager(root=None):
     """初始化通知管理器"""
     global _toast_manager
