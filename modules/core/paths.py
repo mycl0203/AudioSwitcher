@@ -52,7 +52,11 @@ class PathManager:
     def _get_base_dir() -> str:
         """获取项目根目录 - 兼容源码运行和打包运行"""
         if getattr(sys, 'frozen', False):
-            return os.path.dirname(sys.executable)
+            # 打包运行：检查是否是PyInstaller打包
+            if hasattr(sys, '_MEIPASS'):
+                return sys._MEIPASS  # PyInstaller临时解压目录
+            else:
+                return os.path.dirname(sys.executable)
         # 源码运行时，获取当前文件的上两级目录
         current_file = os.path.abspath(__file__)
         modules_dir = os.path.dirname(current_file)
