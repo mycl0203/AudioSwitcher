@@ -1,0 +1,15 @@
+﻿{
+  "===== 使用必读 =====": "",
+  "1.配置说明": "优先用Item ID，永久稳定",
+  "2.后台开关": "默认关闭，不占资源；改为true开启常驻",
+  "3.操作说明": "所有配置都可以在UI界面完成，无需手动编辑JSON",
+  "4.刷新设备": "修改 regen_config 为 true，运行脚本自动更新CSV",
+  "regen_config": false,
+  "enable_tray": false,
+  "enable_hotkey": true,
+  "hotkey_cycle": "ctrl+alt+right",
+  "hotkey_mute": "ctrl+alt+m",
+  "enable_gui": false,
+  "enable_notification": true,
+  "设备组": []
+}
