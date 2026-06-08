@@ -152,3 +152,8 @@ config.json
 # Icons
 icon.ico
 icon.png
+
+# Build files
+build_and_push.bat
+make_icon.py
+test_add_device_group.py
