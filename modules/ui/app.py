@@ -693,8 +693,8 @@ class AudioSwitcherApp:
         
         editor = ctk.CTkToplevel(self.root)
         editor.title("编辑设备组" if edit_index is not None else "添加设备组")
-        editor.geometry("620x820")
-        editor.minsize(580, 780)
+        editor.geometry("620x780")
+        editor.minsize(560, 600)
         editor.resizable(True, True)
         editor.grab_set()
         
@@ -710,12 +710,31 @@ class AudioSwitcherApp:
         
         # 准备编辑数据
         edit_group = None
+        initial_output = ""
+        initial_input = ""
+        
         if edit_index is not None and 0 <= edit_index < len(self.config.device_groups):
             edit_group = self.config.device_groups[edit_index]
-        
-        # 初始值
-        initial_output = edit_group.output_device_name if edit_group else (output_names[0] if output_names else "")
-        initial_input = edit_group.input_device_name if edit_group else (input_names[0] if input_names else "")
+            # 编辑模式：优先通过设备ID匹配，如果找不到再使用名称
+            initial_output = edit_group.output_device_name
+            initial_input = edit_group.input_device_name
+            
+            # 尝试通过设备ID找到当前设备名
+            if edit_group.output_device_id:
+                for d in output_devices:
+                    if d.device_id.strip().lower() == edit_group.output_device_id.strip().lower():
+                        initial_output = d.name
+                        break
+            
+            if edit_group.input_device_id:
+                for d in input_devices:
+                    if d.device_id.strip().lower() == edit_group.input_device_id.strip().lower():
+                        initial_input = d.name
+                        break
+        else:
+            # 新建模式：使用第一个设备作为默认
+            initial_output = output_names[0] if output_names else ""
+            initial_input = input_names[0] if input_names else ""
         
         name_var = ctk.StringVar(value=edit_group.display_name if edit_group else self._generate_default_name(initial_output, initial_input))
         output_var = ctk.StringVar(value=initial_output)
@@ -746,13 +765,18 @@ class AudioSwitcherApp:
         def clear_error():
             error_label.pack_forget()
         
-        # 主容器（不使用滚动，所有内容完整显示）
-        main_container = ctk.CTkFrame(editor, fg_color="transparent")
-        main_container.pack(fill="both", expand=True, padx=16, pady=(0, 12))
+        # 使用可滚动的主容器
+        scroll_container = ctk.CTkScrollableFrame(
+            editor,
+            label_text="",
+            corner_radius=theme.radius.md,
+            fg_color="transparent"
+        )
+        scroll_container.pack(fill="both", expand=True, padx=16, pady=(0, 12))
         
         # 顶部必填提示
         top_hint = ctk.CTkLabel(
-            main_container,
+            scroll_container,
             text="📝 带 * 的为必填项",
             font=(theme.fonts.main, theme.fonts.sizes["sm"]),
             text_color=theme.colors.text_muted
@@ -760,7 +784,7 @@ class AudioSwitcherApp:
         top_hint.pack(anchor="w", pady=(0, 14))
         
         # 表单区域卡片
-        form_card = self._create_section_card(main_container, "设备组信息")
+        form_card = self._create_section_card(scroll_container, "设备组信息")
         form_card.pack(fill="x", pady=(0, 16))
         
         # 名称
@@ -899,12 +923,11 @@ class AudioSwitcherApp:
         ).pack(side="left", padx=(12, 0))
         
         # ============== 固定在底部的按钮区域 ==============
-        button_container = ctk.CTkFrame(editor, fg_color=theme.colors.bg_main, height=80)
+        button_container = ctk.CTkFrame(editor, fg_color=theme.colors.bg_main)
         button_container.pack(fill="x", padx=16, pady=(0, 16))
-        button_container.pack_propagate(False)
         
         button_frame = ctk.CTkFrame(button_container, fg_color="transparent")
-        button_frame.pack(fill="x", expand=True)
+        button_frame.pack(fill="x", pady=12)
         
         cancel_btn = ctk.CTkButton(
             button_frame,
