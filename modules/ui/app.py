@@ -57,8 +57,8 @@ class AudioSwitcherApp:
             
             self.root = ctk.CTk()
             self.root.title("音频切换器")
-            self.root.geometry("460x600")
-            self.root.minsize(420, 560)
+            self.root.geometry("500x700")
+            self.root.minsize(500, 700)
             self.root.resizable(True, True)
             self.root.protocol("WM_DELETE_WINDOW", self._minimize_to_tray)
             
@@ -694,8 +694,8 @@ class AudioSwitcherApp:
         editor = ctk.CTkToplevel(self.root)
         editor.title("编辑设备组" if edit_index is not None else "添加设备组")
         # 设置编辑器窗口大小和最小尺寸 - 使用优化后的尺寸
-        editor.geometry("480x620")
-        editor.minsize(460, 600)
+        editor.geometry("500x700")
+        editor.minsize(500, 700)
         editor.resizable(True, True)
         editor.grab_set()
         
