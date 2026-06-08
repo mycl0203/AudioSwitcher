@@ -953,21 +953,22 @@ class AudioSwitcherApp:
             
             is_modified['value'] = True
         
-        # 追踪输入变化
-        name_var.trace_add("write", lambda *args: validate())
-        output_var.trace_add("write", lambda *args: (validate(), auto_update_name()))
-        input_var.trace_add("write", lambda *args: (validate(), auto_update_name()))
+        # 名称变更追踪（标记是否手动修改）
+        def on_name_change(*args):
+            name_manually_modified['value'] = True
+            validate()
         
-        # 自动更新默认名称
-        def auto_update_name():
-            # 仅在没有编辑过名称（或就是默认名称）时才自动更新
-            current_name = name_var.get().strip()
-            auto_name = self._generate_default_name(output_var.get(), input_var.get())
-            
-            if not current_name or (not edit_group):
+        name_var.trace_add("write", on_name_change)
+        
+        # 设备变更时更新默认名称（仅当未手动修改时）
+        def on_device_change(*args):
+            if not name_manually_modified['value']:
+                auto_name = self._generate_default_name(output_var.get(), input_var.get())
                 name_var.set(auto_name)
-            elif edit_group and current_name == edit_group.display_name:
-                name_var.set(auto_name)
+            validate()
+        
+        output_var.trace_add("write", on_device_change)
+        input_var.trace_add("write", on_device_change)
         
         # 检查并关闭 - 防误操作
         def check_and_close():
