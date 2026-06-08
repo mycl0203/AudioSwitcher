@@ -693,13 +693,15 @@ class AudioSwitcherApp:
         
         editor = ctk.CTkToplevel(self.root)
         editor.title("编辑设备组" if edit_index is not None else "添加设备组")
-        editor.geometry("620x850")
-        editor.minsize(580, 800)
+        editor.geometry("620x820")
+        editor.minsize(580, 780)
         editor.resizable(True, True)
         editor.grab_set()
         
         # 保存是否被修改的状态
         is_modified = {'value': False}
+        # 记录是否手动修改过名称
+        name_manually_modified = {'value': False}
         
         # 获取设备列表
         output_devices, input_devices = config_manager.scan_devices()
@@ -744,13 +746,13 @@ class AudioSwitcherApp:
         def clear_error():
             error_label.pack_forget()
         
-        # 表单容器（可滚动，包含所有表单元素）
-        form_scroll = ctk.CTkScrollableFrame(editor, label_text="")
-        form_scroll.pack(fill="both", expand=True, padx=16, pady=(0, 16))
+        # 主容器（不使用滚动，所有内容完整显示）
+        main_container = ctk.CTkFrame(editor, fg_color="transparent")
+        main_container.pack(fill="both", expand=True, padx=16, pady=(0, 12))
         
         # 顶部必填提示
         top_hint = ctk.CTkLabel(
-            form_scroll,
+            main_container,
             text="📝 带 * 的为必填项",
             font=(theme.fonts.main, theme.fonts.sizes["sm"]),
             text_color=theme.colors.text_muted
@@ -758,7 +760,7 @@ class AudioSwitcherApp:
         top_hint.pack(anchor="w", pady=(0, 14))
         
         # 表单区域卡片
-        form_card = self._create_section_card(form_scroll, "设备组信息")
+        form_card = self._create_section_card(main_container, "设备组信息")
         form_card.pack(fill="x", pady=(0, 16))
         
         # 名称
@@ -839,16 +841,27 @@ class AudioSwitcherApp:
         )
         mix_hint_label.pack(fill="x", padx=16, pady=(0, 14))
         
-        # 快捷键
+        # 快捷键（带提示）
         hk_container = ctk.CTkFrame(form_card, fg_color="transparent")
         hk_container.pack(fill="x", padx=16, pady=(0, 16))
         
+        hk_label_frame = ctk.CTkFrame(hk_container, fg_color="transparent")
+        hk_label_frame.pack(fill="x")
+        
         ctk.CTkLabel(
-            hk_container,
+            hk_label_frame,
             text="快捷键（可选）",
             font=(theme.fonts.main, theme.fonts.sizes["base"]),
             text_color=theme.colors.text_secondary
-        ).pack(anchor="w", pady=(0, 6))
+        ).pack(side="left", anchor="w", pady=(0, 6))
+        
+        # 小提示图标
+        ctk.CTkLabel(
+            hk_label_frame,
+            text="❓",
+            font=(theme.fonts.main, theme.fonts.sizes["sm"]),
+            text_color=theme.colors.text_muted
+        ).pack(side="left", padx=4)
         
         hk_row = ctk.CTkFrame(hk_container, fg_color="transparent")
         hk_row.pack(fill="x")
