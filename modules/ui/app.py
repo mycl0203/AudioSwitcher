@@ -144,7 +144,7 @@ class AudioSwitcherApp:
         
         # 当前设备卡片
         status_card = self._create_section_card(self.switch_frame, "当前设备")
-        status_card.pack(fill="x", pady=(0, 10), padx=4)
+        status_card.pack(fill="x", pady=(0, 12), padx=8)
         
         self.status_label = ctk.CTkLabel(
             status_card,
@@ -152,7 +152,7 @@ class AudioSwitcherApp:
             font=(theme.fonts.main, theme.fonts.sizes["xl"], "bold"),
             text_color=theme.colors.text_primary
         )
-        self.status_label.pack(anchor="w", padx=16, pady=(6, 16))
+        self.status_label.pack(anchor="w", padx=16, pady=(8, 18))
         
         # 麦克风状态卡片
         mic_card = ctk.CTkFrame(
@@ -162,7 +162,7 @@ class AudioSwitcherApp:
             border_width=1,
             border_color=theme.colors.border
         )
-        mic_card.pack(fill="x", pady=(0, 10), padx=4)
+        mic_card.pack(fill="x", pady=(0, 12), padx=8)
         
         mic_title = ctk.CTkLabel(
             mic_card,
@@ -170,7 +170,7 @@ class AudioSwitcherApp:
             font=(theme.fonts.main, theme.fonts.sizes["base"]),
             text_color=theme.colors.text_secondary
         )
-        mic_title.pack(anchor="w", padx=16, pady=(12, 4))
+        mic_title.pack(anchor="w", padx=16, pady=(14, 6))
         
         try:
             muted = audio_controller.get_mute_status()
@@ -190,52 +190,52 @@ class AudioSwitcherApp:
                 font=(theme.fonts.main, theme.fonts.sizes["lg"]),
                 text_color=theme.colors.text_secondary
             )
-        self.mute_status_label.pack(anchor="w", padx=16, pady=(0, 12))
+        self.mute_status_label.pack(anchor="w", padx=16, pady=(0, 14))
         
         # 快速操作卡片
         actions_card = self._create_section_card(self.switch_frame, "快速操作")
-        actions_card.pack(fill="x", pady=(0, 10), padx=4)
+        actions_card.pack(fill="x", pady=(0, 12), padx=8)
         
         # 静音按钮
         mute_btn = ctk.CTkButton(
             actions_card,
             text="切换麦克风静音",
-            height=52,
+            height=56,
             font=(theme.fonts.main, theme.fonts.sizes["base"]),
             corner_radius=theme.radius.lg,
             fg_color=theme.colors.primary,
             hover_color=theme.colors.primary_hover,
             command=self._toggle_mute
         )
-        mute_btn.pack(fill="x", padx=12, pady=(6, 6))
+        mute_btn.pack(fill="x", padx=14, pady=(8, 8))
         
         # 循环切换按钮
         if self.config and len(self.config.device_groups) > 0:
             cycle_btn = ctk.CTkButton(
                 actions_card,
                 text="循环切换设备组",
-                height=52,
+                height=56,
                 font=(theme.fonts.main, theme.fonts.sizes["base"]),
                 corner_radius=theme.radius.lg,
                 fg_color=theme.colors.gray_700,
                 hover_color=theme.colors.gray_800,
                 command=self._cycle_switch
             )
-            cycle_btn.pack(fill="x", padx=12, pady=(0, 12))
+            cycle_btn.pack(fill="x", padx=14, pady=(0, 14))
         
         # 设备组卡片
         if self.config and len(self.config.device_groups) > 0:
             groups_card = self._create_section_card(self.switch_frame, "设备组")
-            groups_card.pack(fill="x", padx=4)
+            groups_card.pack(fill="x", padx=8)
             
             for idx, group in enumerate(self.config.device_groups):
                 is_current = (idx == self.current_group_index)
                 group_btn = self._create_group_button(groups_card, group, idx, is_current)
-                group_btn.pack(fill="x", padx=12, pady=(0, 8))
+                group_btn.pack(fill="x", padx=14, pady=(0, 10))
             
             # 底部空白
             spacer = ctk.CTkLabel(groups_card, text="")
-            spacer.pack(pady=4)
+            spacer.pack(pady=6)
     
     def _create_section_card(self, parent, title_text: str) -> ctk.CTkFrame:
         """创建带标题的卡片"""
@@ -257,7 +257,7 @@ class AudioSwitcherApp:
         
         return card
     
-    def _create_group_button(self, parent, group: DeviceGroup, index: int, is_current: bool) -> ctk.CTkButton:
+    def _create_group_button(self, parent, group: DeviceGroup, index: int, is_current: bool) -> ctk.CTkFrame:
         """创建设备组按钮，带选中状态标识"""
         
         btn_container = ctk.CTkFrame(parent, fg_color="transparent")
@@ -267,11 +267,11 @@ class AudioSwitcherApp:
             indicator = ctk.CTkFrame(
                 btn_container,
                 width=4,
-                height=48,
+                height=52,
                 corner_radius=2,
                 fg_color=theme.colors.primary
             )
-            indicator.pack(side="left", fill="y", padx=(0, 8))
+            indicator.pack(side="left", fill="y", padx=(0, 10))
         
         # 按钮文本
         btn_text = f"✓ {group.display_name}" if is_current else group.display_name
@@ -279,7 +279,7 @@ class AudioSwitcherApp:
         group_btn = ctk.CTkButton(
             btn_container,
             text=btn_text,
-            height=48,
+            height=52,
             font=(theme.fonts.main, theme.fonts.sizes["base"], "bold" if is_current else "normal"),
             corner_radius=theme.radius.md,
             fg_color=theme.colors.primary if is_current else theme.colors.gray_100,
@@ -302,19 +302,19 @@ class AudioSwitcherApp:
         
         # 添加按钮卡片
         add_card = self._create_section_card(self.config_frame, "设备组管理")
-        add_card.pack(fill="x", pady=(0, 10), padx=4)
+        add_card.pack(fill="x", pady=(0, 12), padx=8)
         
         add_btn = ctk.CTkButton(
             add_card,
             text="添加设备组",
-            height=52,
+            height=56,
             font=(theme.fonts.main, theme.fonts.sizes["base"]),
             corner_radius=theme.radius.lg,
             fg_color=theme.colors.success,
             hover_color=theme.colors.success_hover,
             command=lambda: self._open_group_editor()
         )
-        add_btn.pack(fill="x", padx=12, pady=12)
+        add_btn.pack(fill="x", padx=14, pady=14)
         
         self._refresh_config_tab()
     
@@ -332,7 +332,7 @@ class AudioSwitcherApp:
                 border_width=1,
                 border_color=theme.colors.border
             )
-            empty_card.pack(fill="x", padx=4)
+            empty_card.pack(fill="x", padx=8)
             
             empty_label = ctk.CTkLabel(
                 empty_card,
@@ -346,11 +346,11 @@ class AudioSwitcherApp:
         # 显示设备组列表
         for idx, group in enumerate(self.config.device_groups):
             card = self._create_device_group_card(idx, group)
-            card.pack(fill="x", pady=(0, 10), padx=4)
+            card.pack(fill="x", pady=(0, 12), padx=8)
         
         # 底部空白
         spacer = ctk.CTkLabel(self.config_frame, text="")
-        spacer.pack(pady=4)
+        spacer.pack(pady=6)
     
     def _create_device_group_card(self, index: int, group: DeviceGroup) -> ctk.CTkFrame:
         """创建设备组管理卡片"""
@@ -364,7 +364,7 @@ class AudioSwitcherApp:
         
         # 设备组信息
         info_frame = ctk.CTkFrame(card, fg_color="transparent")
-        info_frame.pack(side="left", fill="both", expand=True, padx=16, pady=14)
+        info_frame.pack(side="left", fill="both", expand=True, padx=18, pady=16)
         
         name_label = ctk.CTkLabel(
             info_frame,
@@ -382,7 +382,7 @@ class AudioSwitcherApp:
             anchor="w",
             text_color=theme.colors.text_secondary
         )
-        out_label.pack(fill="x", pady=(4, 0))
+        out_label.pack(fill="x", pady=(6, 0))
         
         in_label = ctk.CTkLabel(
             info_frame,
@@ -391,7 +391,7 @@ class AudioSwitcherApp:
             anchor="w",
             text_color=theme.colors.text_secondary
         )
-        in_label.pack(fill="x", pady=(2, 0))
+        in_label.pack(fill="x", pady=(4, 0))
         
         if group.hotkey:
             hotkey_label = ctk.CTkLabel(
@@ -401,17 +401,17 @@ class AudioSwitcherApp:
                 anchor="w",
                 text_color=theme.colors.text_muted
             )
-            hotkey_label.pack(fill="x", pady=(2, 0))
+            hotkey_label.pack(fill="x", pady=(4, 0))
         
         # 操作按钮
         btn_frame = ctk.CTkFrame(card, fg_color="transparent")
-        btn_frame.pack(side="right", padx=12, pady=14)
+        btn_frame.pack(side="right", padx=14, pady=16)
         
         edit_btn = ctk.CTkButton(
             btn_frame,
             text="编辑",
-            width=64,
-            height=40,
+            width=72,
+            height=44,
             font=(theme.fonts.main, theme.fonts.sizes["base"]),
             corner_radius=theme.radius.md,
             fg_color=theme.colors.gray_100,
@@ -419,20 +419,20 @@ class AudioSwitcherApp:
             text_color=theme.colors.text_primary,
             command=lambda i=index: self._open_group_editor(i)
         )
-        edit_btn.pack(side="left", padx=3)
+        edit_btn.pack(side="left", padx=4)
         
         delete_btn = ctk.CTkButton(
             btn_frame,
             text="删除",
-            width=64,
-            height=40,
+            width=72,
+            height=44,
             font=(theme.fonts.main, theme.fonts.sizes["base"]),
             corner_radius=theme.radius.md,
             fg_color=theme.colors.error,
             hover_color=theme.colors.error_hover,
             command=lambda i=index: self._confirm_delete_group(i)
         )
-        delete_btn.pack(side="left", padx=3)
+        delete_btn.pack(side="left", padx=4)
         
         return card
     
@@ -447,7 +447,7 @@ class AudioSwitcherApp:
         
         # 通知设置卡片
         notif_card = self._create_section_card(settings_frame, "通知设置")
-        notif_card.pack(fill="x", pady=(0, 10), padx=4)
+        notif_card.pack(fill="x", pady=(0, 12), padx=8)
         
         notif_var = ctk.BooleanVar(value=self.config.enable_notification if self.config else True)
         
@@ -462,11 +462,11 @@ class AudioSwitcherApp:
             text="切换通知",
             variable=notif_var,
             font=(theme.fonts.main, theme.fonts.sizes["base"]),
-            switch_width=50,
-            switch_height=28,
+            switch_width=54,
+            switch_height=30,
             command=toggle_notif
         )
-        notif_switch.pack(anchor="w", padx=16, pady=(12, 0))
+        notif_switch.pack(anchor="w", padx=16, pady=(14, 0))
         
         # 状态文字
         self.notification_status_label = ctk.CTkLabel(
@@ -475,11 +475,11 @@ class AudioSwitcherApp:
             font=(theme.fonts.main, theme.fonts.sizes["sm"]),
             text_color=theme.colors.text_muted
         )
-        self.notification_status_label.pack(anchor="w", padx=16, pady=(4, 12))
+        self.notification_status_label.pack(anchor="w", padx=16, pady=(6, 14))
         
         # 快捷键设置卡片
         hotkey_card = self._create_section_card(settings_frame, "快捷键设置")
-        hotkey_card.pack(fill="x", pady=(0, 10), padx=4)
+        hotkey_card.pack(fill="x", pady=(0, 12), padx=8)
         
         self._create_hotkey_setting(
             hotkey_card,
@@ -497,7 +497,7 @@ class AudioSwitcherApp:
         
         # 退出按钮卡片
         exit_card = self._create_section_card(settings_frame, "退出应用")
-        exit_card.pack(fill="x", padx=4)
+        exit_card.pack(fill="x", padx=8)
         
         exit_desc = ctk.CTkLabel(
             exit_card,
@@ -505,19 +505,19 @@ class AudioSwitcherApp:
             font=(theme.fonts.main, theme.fonts.sizes["sm"]),
             text_color=theme.colors.text_muted
         )
-        exit_desc.pack(anchor="w", padx=16, pady=(12, 8))
+        exit_desc.pack(anchor="w", padx=16, pady=(14, 10))
         
         exit_btn = ctk.CTkButton(
             exit_card,
             text="退出应用",
-            height=52,
+            height=56,
             font=(theme.fonts.main, theme.fonts.sizes["base"]),
             corner_radius=theme.radius.lg,
             fg_color=theme.colors.error,
             hover_color=theme.colors.error_hover,
             command=self._confirm_exit
         )
-        exit_btn.pack(fill="x", padx=16, pady=(0, 12))
+        exit_btn.pack(fill="x", padx=16, pady=(0, 14))
     
     def _get_notification_status_text(self, enabled: bool) -> str:
         """获取通知开关状态文字"""
@@ -532,7 +532,7 @@ class AudioSwitcherApp:
     
     def _create_hotkey_setting(self, parent, label_text: str, current_hotkey: str, update_func: Callable):
         frame = ctk.CTkFrame(parent, fg_color="transparent")
-        frame.pack(fill="x", padx=16, pady=6)
+        frame.pack(fill="x", padx=16, pady=8)
         
         label = ctk.CTkLabel(
             frame,
@@ -549,12 +549,12 @@ class AudioSwitcherApp:
             frame,
             textvariable=hotkey_var,
             font=(theme.fonts.ui, theme.fonts.sizes["base"]),
-            width=20,
+            width=24,
             fg_color=theme.colors.gray_100,
             corner_radius=theme.radius.md,
-            height=42
+            height=46
         )
-        hotkey_display.pack(side="left", padx=10)
+        hotkey_display.pack(side="left", padx=12)
         
         def bind_hk():
             messagebox.showinfo("提示", "请在接下来的10秒内按下快捷键\n按ESC取消")
@@ -569,8 +569,8 @@ class AudioSwitcherApp:
         bind_btn = ctk.CTkButton(
             frame,
             text="绑定",
-            width=72,
-            height=42,
+            width=80,
+            height=46,
             font=(theme.fonts.main, theme.fonts.sizes["base"]),
             corner_radius=theme.radius.md,
             fg_color=theme.colors.primary,
@@ -693,8 +693,9 @@ class AudioSwitcherApp:
         
         editor = ctk.CTkToplevel(self.root)
         editor.title("编辑设备组" if edit_index is not None else "添加设备组")
-        editor.geometry("620x780")
-        editor.minsize(560, 600)
+        # 设置编辑器窗口大小和最小尺寸 - 使用优化后的尺寸
+        editor.geometry("480x620")
+        editor.minsize(460, 600)
         editor.resizable(True, True)
         editor.grab_set()
         
@@ -736,167 +737,193 @@ class AudioSwitcherApp:
             initial_output = output_names[0] if output_names else ""
             initial_input = input_names[0] if input_names else ""
         
-        name_var = ctk.StringVar(value=edit_group.display_name if edit_group else self._generate_default_name(initial_output, initial_input))
+        # 生成默认名称：设备组1/2/3...
+        def get_next_default_name():
+            existing_numbers = []
+            for group in self.config.device_groups:
+                name = group.display_name
+                if name.startswith("设备组"):
+                    try:
+                        num = int(name[3:])
+                        existing_numbers.append(num)
+                    except ValueError:
+                        pass
+            next_num = 1
+            while next_num in existing_numbers:
+                next_num += 1
+            return f"设备组{next_num}"
+        
+        name_var = ctk.StringVar(value=edit_group.display_name if edit_group else get_next_default_name())
         output_var = ctk.StringVar(value=initial_output)
         input_var = ctk.StringVar(value=initial_input)
         hotkey_var = ctk.StringVar(value=edit_group.hotkey if edit_group else "")
         
-        # 错误标签
-        error_frame = ctk.CTkFrame(editor, fg_color="transparent")
-        error_frame.pack(fill="x", padx=16, pady=12)
+        # 限制名称输入不超过15个字符
+        def validate_name_input(new_value):
+            if len(new_value) <= 15:
+                return True
+            return False
         
-        error_label = ctk.CTkLabel(
-            error_frame,
-            text="",
-            font=(theme.fonts.main, theme.fonts.sizes["sm"]),
-            text_color=theme.colors.error,
-            fg_color=theme.colors.error_light,
-            corner_radius=theme.radius.md,
-            padx=14,
-            pady=10
+        vcmd = (editor.register(validate_name_input), '%P')
+        
+        # 主容器 - 使用统一的布局，使用grid更精确控制
+        editor.grid_rowconfigure(0, weight=1)
+        editor.grid_columnconfigure(0, weight=1)
+        
+        main_container = ctk.CTkFrame(editor, fg_color="transparent")
+        main_container.grid(row=0, column=0, sticky="nsew", padx=20, pady=20)
+        main_container.grid_rowconfigure(0, weight=1)  # 内容区域可伸缩
+        main_container.grid_rowconfigure(1, weight=0)  # 按钮区域固定
+        main_container.grid_columnconfigure(0, weight=1)
+        
+        # ========== 内容容器 ==========
+        content_frame = ctk.CTkFrame(main_container, fg_color="transparent")
+        content_frame.grid(row=0, column=0, sticky="nsew", pady=(0, 16))
+        
+        # ========== 标题区域 ==========
+        title_label = ctk.CTkLabel(
+            content_frame,
+            text="编辑设备组" if edit_index is not None else "创建设备组",
+            font=(theme.fonts.main, 22, "bold"),
+            text_color=theme.colors.text_primary
         )
-        error_label.pack(fill="x")
-        error_label.pack_forget()
+        title_label.pack(anchor="w", pady=(0, 8))
         
-        def show_error(message: str):
-            error_label.configure(text=message)
-            error_label.pack(fill="x")
-        
-        def clear_error():
-            error_label.pack_forget()
-        
-        # 使用可滚动的主容器
-        scroll_container = ctk.CTkScrollableFrame(
-            editor,
-            label_text="",
-            corner_radius=theme.radius.md,
-            fg_color="transparent"
-        )
-        scroll_container.pack(fill="both", expand=True, padx=16, pady=(0, 12))
-        
-        # 顶部必填提示
-        top_hint = ctk.CTkLabel(
-            scroll_container,
-            text="📝 带 * 的为必填项",
-            font=(theme.fonts.main, theme.fonts.sizes["sm"]),
+        subtitle_label = ctk.CTkLabel(
+            content_frame,
+            text="配置您的音频输入输出设备组合",
+            font=(theme.fonts.main, 13),
             text_color=theme.colors.text_muted
         )
-        top_hint.pack(anchor="w", pady=(0, 14))
+        subtitle_label.pack(anchor="w", pady=(0, 20))
         
-        # 表单区域卡片
-        form_card = self._create_section_card(scroll_container, "设备组信息")
-        form_card.pack(fill="x", pady=(0, 16))
+        # ========== 表单容器 ==========
+        form_frame = ctk.CTkFrame(
+            content_frame,
+            fg_color=theme.colors.bg_main,
+            corner_radius=12,
+            border_width=1,
+            border_color=theme.colors.border
+        )
+        form_frame.pack(fill="x", pady=(0, 16))
         
-        # 名称
-        name_container = ctk.CTkFrame(form_card, fg_color="transparent")
-        name_container.pack(fill="x", padx=16, pady=(16, 14))
+        # 内容区域
+        content_padding = 18
+        
+        # 1. 显示名称
+        name_section = ctk.CTkFrame(form_frame, fg_color="transparent")
+        name_section.pack(fill="x", padx=content_padding, pady=(content_padding, 12))
         
         ctk.CTkLabel(
-            name_container,
-            text="显示名称 *",
-            font=(theme.fonts.main, theme.fonts.sizes["base"]),
-            text_color=theme.colors.text_secondary
+            name_section,
+            text="显示名称",
+            font=(theme.fonts.main, 13, "bold"),
+            text_color=theme.colors.text_primary
         ).pack(anchor="w", pady=(0, 6))
         
         name_entry = ctk.CTkEntry(
-            name_container,
+            name_section,
             textvariable=name_var,
-            font=(theme.fonts.main, theme.fonts.sizes["base"]),
-            height=46,
-            corner_radius=theme.radius.md,
+            font=(theme.fonts.main, 14),
+            height=44,
+            corner_radius=8,
             border_width=2,
             border_color=theme.colors.border,
-            fg_color=theme.colors.bg_main
+            fg_color=theme.colors.bg_main,
+            validate='key',
+            validatecommand=vcmd,
+            placeholder_text="输入设备组名称..."
         )
         name_entry.pack(fill="x")
         
-        # 输出设备
-        out_container = ctk.CTkFrame(form_card, fg_color="transparent")
-        out_container.pack(fill="x", padx=16, pady=(0, 14))
+        # 分隔线
+        separator1 = ctk.CTkFrame(
+            form_frame,
+            height=1,
+            fg_color=theme.colors.border
+        )
+        separator1.pack(fill="x", padx=content_padding)
+        
+        # 2. 输出设备
+        output_section = ctk.CTkFrame(form_frame, fg_color="transparent")
+        output_section.pack(fill="x", padx=content_padding, pady=12)
         
         ctk.CTkLabel(
-            out_container,
-            text="输出设备 *",
-            font=(theme.fonts.main, theme.fonts.sizes["base"]),
-            text_color=theme.colors.text_secondary
+            output_section,
+            text="输出设备",
+            font=(theme.fonts.main, 13, "bold"),
+            text_color=theme.colors.text_primary
         ).pack(anchor="w", pady=(0, 6))
         
         output_menu = ctk.CTkOptionMenu(
-            out_container,
+            output_section,
             values=output_names,
             variable=output_var,
-            font=(theme.fonts.main, theme.fonts.sizes["base"]),
-            height=46,
-            corner_radius=theme.radius.md
+            font=(theme.fonts.main, 14),
+            height=44,
+            corner_radius=8
         )
         output_menu.pack(fill="x")
         
-        # 输入设备
-        in_container = ctk.CTkFrame(form_card, fg_color="transparent")
-        in_container.pack(fill="x", padx=16, pady=(0, 14))
+        # 分隔线
+        separator2 = ctk.CTkFrame(
+            form_frame,
+            height=1,
+            fg_color=theme.colors.border
+        )
+        separator2.pack(fill="x", padx=content_padding)
+        
+        # 3. 输入设备
+        input_section = ctk.CTkFrame(form_frame, fg_color="transparent")
+        input_section.pack(fill="x", padx=content_padding, pady=12)
         
         ctk.CTkLabel(
-            in_container,
-            text="输入设备 *",
-            font=(theme.fonts.main, theme.fonts.sizes["base"]),
-            text_color=theme.colors.text_secondary
+            input_section,
+            text="输入设备",
+            font=(theme.fonts.main, 13, "bold"),
+            text_color=theme.colors.text_primary
         ).pack(anchor="w", pady=(0, 6))
         
         input_menu = ctk.CTkOptionMenu(
-            in_container,
+            input_section,
             values=input_names,
             variable=input_var,
-            font=(theme.fonts.main, theme.fonts.sizes["base"]),
-            height=46,
-            corner_radius=theme.radius.md
+            font=(theme.fonts.main, 14),
+            height=44,
+            corner_radius=8
         )
         input_menu.pack(fill="x")
         
-        # 混合设备提示
-        mix_hint_label = ctk.CTkLabel(
-            form_card,
-            text="💡 支持跨设备组合（比如：输出用音响 + 输入用耳机）",
-            font=(theme.fonts.main, theme.fonts.sizes["sm"]),
-            text_color=theme.colors.text_muted,
-            fg_color=theme.colors.gray_100,
-            corner_radius=theme.radius.md,
-            padx=12,
-            pady=10
+        # 分隔线
+        separator3 = ctk.CTkFrame(
+            form_frame,
+            height=1,
+            fg_color=theme.colors.border
         )
-        mix_hint_label.pack(fill="x", padx=16, pady=(0, 14))
+        separator3.pack(fill="x", padx=content_padding)
         
-        # 快捷键（带提示）
-        hk_container = ctk.CTkFrame(form_card, fg_color="transparent")
-        hk_container.pack(fill="x", padx=16, pady=(0, 16))
-        
-        hk_label_frame = ctk.CTkFrame(hk_container, fg_color="transparent")
-        hk_label_frame.pack(fill="x")
+        # 4. 快捷键
+        hotkey_section = ctk.CTkFrame(form_frame, fg_color="transparent")
+        hotkey_section.pack(fill="x", padx=content_padding, pady=12)
         
         ctk.CTkLabel(
-            hk_label_frame,
+            hotkey_section,
             text="快捷键（可选）",
-            font=(theme.fonts.main, theme.fonts.sizes["base"]),
-            text_color=theme.colors.text_secondary
-        ).pack(side="left", anchor="w", pady=(0, 6))
+            font=(theme.fonts.main, 13, "bold"),
+            text_color=theme.colors.text_primary
+        ).pack(anchor="w", pady=(0, 6))
         
-        # 小提示图标
-        ctk.CTkLabel(
-            hk_label_frame,
-            text="❓",
-            font=(theme.fonts.main, theme.fonts.sizes["sm"]),
-            text_color=theme.colors.text_muted
-        ).pack(side="left", padx=4)
-        
-        hk_row = ctk.CTkFrame(hk_container, fg_color="transparent")
+        hk_row = ctk.CTkFrame(hotkey_section, fg_color="transparent")
         hk_row.pack(fill="x")
         
         hotkey_display = ctk.CTkLabel(
             hk_row,
             textvariable=hotkey_var,
-            font=(theme.fonts.ui, theme.fonts.sizes["base"]),
+            font=(theme.fonts.ui, 14),
             fg_color=theme.colors.gray_100,
-            corner_radius=theme.radius.md,
-            height=46
+            corner_radius=8,
+            height=44,
+            padx=16
         )
         hotkey_display.pack(side="left", fill="x", expand=True)
         
@@ -914,42 +941,71 @@ class AudioSwitcherApp:
             hk_row,
             text="绑定",
             width=90,
-            height=46,
-            font=(theme.fonts.main, theme.fonts.sizes["base"]),
-            corner_radius=theme.radius.md,
+            height=44,
+            font=(theme.fonts.main, 14),
+            corner_radius=8,
             fg_color=theme.colors.primary,
             hover_color=theme.colors.primary_hover,
             command=bind_hk
         ).pack(side="left", padx=(12, 0))
         
-        # ============== 固定在底部的按钮区域 ==============
-        button_container = ctk.CTkFrame(editor, fg_color=theme.colors.bg_main)
-        button_container.pack(fill="x", padx=16, pady=(0, 16))
+        # 提示信息
+        hint_label = ctk.CTkLabel(
+            hotkey_section,
+            text="💡 支持跨设备组合（输出用音响 + 输入用耳机）",
+            font=(theme.fonts.main, 12),
+            text_color=theme.colors.text_muted
+        )
+        hint_label.pack(anchor="w", pady=(10, content_padding))
         
-        button_frame = ctk.CTkFrame(button_container, fg_color="transparent")
-        button_frame.pack(fill="x", pady=12)
+        # ========== 错误提示区域 ==========
+        error_frame = ctk.CTkFrame(content_frame, fg_color="transparent")
+        error_frame.pack(fill="x", pady=(0, 16))
+        
+        error_label = ctk.CTkLabel(
+            error_frame,
+            text="",
+            font=(theme.fonts.main, 13),
+            text_color=theme.colors.error,
+            fg_color=theme.colors.error_light,
+            corner_radius=8,
+            padx=16,
+            pady=12
+        )
+        error_label.pack(fill="x")
+        error_label.pack_forget()
+        
+        def show_error(message: str):
+            error_label.configure(text=message)
+            error_label.pack(fill="x")
+        
+        def clear_error():
+            error_label.pack_forget()
+        
+        # ========== 按钮区域 ==========
+        button_frame = ctk.CTkFrame(main_container, fg_color="transparent")
+        button_frame.grid(row=1, column=0, sticky="ew")
         
         cancel_btn = ctk.CTkButton(
             button_frame,
             text="取消",
-            width=120,
-            height=52,
-            font=(theme.fonts.main, theme.fonts.sizes["base"]),
-            corner_radius=theme.radius.md,
+            width=110,
+            height=48,
+            font=(theme.fonts.main, 14),
+            corner_radius=10,
             fg_color=theme.colors.gray_100,
             hover_color=theme.colors.gray_200,
-            text_color=theme.colors.text_primary,
-            command=lambda: check_and_close()
+            text_color=theme.colors.text_primary
         )
         cancel_btn.pack(side="right", padx=(8, 0))
         
         save_btn = ctk.CTkButton(
             button_frame,
             text="保存",
-            width=120,
-            height=52,
-            font=(theme.fonts.main, theme.fonts.sizes["base"], "bold"),
-            corner_radius=theme.radius.md
+            width=110,
+            height=48,
+            font=(theme.fonts.main, 14, "bold"),
+            corner_radius=10
         )
         save_btn.pack(side="right", padx=(12, 0))
         
@@ -983,11 +1039,8 @@ class AudioSwitcherApp:
         
         name_var.trace_add("write", on_name_change)
         
-        # 设备变更时更新默认名称（仅当未手动修改时）
+        # 设备变更时只验证，不自动生成名称
         def on_device_change(*args):
-            if not name_manually_modified['value']:
-                auto_name = self._generate_default_name(output_var.get(), input_var.get())
-                name_var.set(auto_name)
             validate()
         
         output_var.trace_add("write", on_device_change)
@@ -1075,6 +1128,7 @@ class AudioSwitcherApp:
                 self.toast_manager.show_success("设备组已保存")
         
         save_btn.configure(command=save)
+        cancel_btn.configure(command=check_and_close)
         
         # 覆盖关闭行为
         editor.protocol("WM_DELETE_WINDOW", check_and_close)
@@ -1152,15 +1206,16 @@ class AudioSwitcherApp:
         # 创建撤销对话框
         undo_window = ctk.CTkToplevel(self.root)
         undo_window.title("撤销删除")
-        undo_window.geometry("420x180")
+        undo_window.geometry("450x220")
+        undo_window.minsize(450, 220)
         undo_window.resizable(False, False)
         undo_window.attributes("-topmost", True)
         undo_window.grab_set()
         
         # 居中显示
         undo_window.update_idletasks()
-        x = (undo_window.winfo_screenwidth() // 2) - (420 // 2)
-        y = (undo_window.winfo_screenheight() // 2) - (180 // 2)
+        x = (undo_window.winfo_screenwidth() // 2) - (450 // 2)
+        y = (undo_window.winfo_screenheight() // 2) - (220 // 2)
         undo_window.geometry(f"+{x}+{y}")
         
         # 倒计时变量
@@ -1201,25 +1256,26 @@ class AudioSwitcherApp:
         
         # UI
         main_frame = ctk.CTkFrame(undo_window, fg_color="transparent")
-        main_frame.pack(fill="both", expand=True, padx=20, pady=20)
+        main_frame.pack(fill="both", expand=True, padx=24, pady=24)
         
         icon_label = ctk.CTkLabel(
             main_frame,
             text="🗑️",
-            font=(theme.fonts.main, 32)
+            font=(theme.fonts.main, 36)
         )
-        icon_label.pack(pady=(0, 10))
+        icon_label.pack(pady=(0, 12))
         
         message_label = ctk.CTkLabel(
             main_frame,
             text=f"已删除设备组「{group.display_name}」",
             font=(theme.fonts.main, theme.fonts.sizes["base"]),
-            text_color=theme.colors.text_primary
+            text_color=theme.colors.text_primary,
+            wraplength=400
         )
-        message_label.pack(pady=(0, 8))
+        message_label.pack(pady=(0, 12))
         
         timer_frame = ctk.CTkFrame(main_frame, fg_color="transparent")
-        timer_frame.pack(pady=(0, 16))
+        timer_frame.pack(pady=(0, 18))
         
         ctk.CTkLabel(
             timer_frame,
@@ -1251,7 +1307,7 @@ class AudioSwitcherApp:
             button_frame,
             text="关闭",
             width=120,
-            height=40,
+            height=42,
             fg_color=theme.colors.gray_100,
             hover_color=theme.colors.gray_200,
             text_color=theme.colors.text_primary,
@@ -1263,7 +1319,7 @@ class AudioSwitcherApp:
             button_frame,
             text="撤销删除",
             width=120,
-            height=40,
+            height=42,
             fg_color=theme.colors.primary,
             hover_color=theme.colors.primary_hover,
             command=undo_action
