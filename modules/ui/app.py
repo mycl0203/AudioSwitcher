@@ -906,18 +906,10 @@ class AudioSwitcherApp:
         button_frame = ctk.CTkFrame(button_container, fg_color="transparent")
         button_frame.pack(fill="x", expand=True)
         
-        save_btn = ctk.CTkButton(
-            button_frame,
-            text="保存",
-            height=52,
-            font=(theme.fonts.main, theme.fonts.sizes["base"], "bold"),
-            corner_radius=theme.radius.md
-        )
-        save_btn.pack(side="right", padx=(12, 0))
-        
         cancel_btn = ctk.CTkButton(
             button_frame,
             text="取消",
+            width=120,
             height=52,
             font=(theme.fonts.main, theme.fonts.sizes["base"]),
             corner_radius=theme.radius.md,
@@ -926,7 +918,17 @@ class AudioSwitcherApp:
             text_color=theme.colors.text_primary,
             command=lambda: check_and_close()
         )
-        cancel_btn.pack(side="right")
+        cancel_btn.pack(side="right", padx=(8, 0))
+        
+        save_btn = ctk.CTkButton(
+            button_frame,
+            text="保存",
+            width=120,
+            height=52,
+            font=(theme.fonts.main, theme.fonts.sizes["base"], "bold"),
+            corner_radius=theme.radius.md
+        )
+        save_btn.pack(side="right", padx=(12, 0))
         
         # 验证函数 - 更新保存按钮状态
         def validate():
